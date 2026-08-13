@@ -14,7 +14,7 @@ to your `wezterm.lua` (available variants are `light` and `dark`):
 
 ```lua
 local wezterm = require('wezterm')
-local theme = wezterm.plugin.require('https://github.com/mateibarbu19/flexoki-wezterm-theme').dark
+local theme = wezterm.plugin.require('https://github.com/mateibarbu19/flexoki-wezterm').dark
 ```
 
 If you prefer to install the theme manually, copy `plugin/init.lua` to

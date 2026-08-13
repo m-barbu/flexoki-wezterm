@@ -4,7 +4,7 @@
 -- Palette from Flexoki by Steph Ango (https://stephango.com/flexoki),
 -- Copyright (c) Steph Ango, MIT licensed.
 --
--- repository: https://github.com/mateibarbu19/flexoki-wezterm-theme
+-- repository: https://github.com/mateibarbu19/flexoki-wezterm
 -- license: MIT
 
 -- The full Flexoki scale, shared by both variants. Accent steps follow the
