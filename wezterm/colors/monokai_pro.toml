@@ -1,0 +1,37 @@
+[colors]
+ansi = [
+    "#2D2A2E",
+    "#FF6188",
+    "#A9DC76",
+    "#FFD866",
+    "#FC9867",
+    "#AB9DF2",
+    "#78DCE8",
+    "#FCFCFA",
+]
+brights = [
+    "#908E8F",
+    "#FF6188",
+    "#A9DC76",
+    "#FFD866",
+    "#FC9867",
+    "#AB9DF2",
+    "#78DCE8",
+    "#FCFCFA",
+]
+
+cursor_bg = "#c4c5b5"
+cursor_border = "#c4c5b5"
+cursor_fg = "#2D2A2E"
+foreground = "#FCFCFA"
+background = "#2D2A2E"
+
+# cursor_bg = "#c4c5b5"
+# cursor_border = "#c4c5b5"
+# cursor_fg = "#1a1a1a"
+
+scrollbar_thumb = '#FCFCFA'
+
+[metadata]
+aliases = ["Monokai Pro (Matei)"]
+name = "Monokai Pro (Matei)"

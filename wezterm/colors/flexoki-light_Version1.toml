@@ -1,0 +1,80 @@
+# name: Flexoki Light (Improved)
+# author: Based on Flexoki by Steph Ango (https://stephango.com/flexoki)
+# license: MIT
+# Improvements: better ANSI white/bright contrast, tab bar styling,
+# split/compose colors, and indexed colors for 256-color support.
+
+[colors]
+ansi = [
+  "#100F0F", # Black  (base: black)
+  "#AF3029", # Red    (red-600)
+  "#66800B", # Green  (green-600)
+  "#AD8301", # Yellow (yellow-600)
+  "#205EA6", # Blue   (blue-600)
+  "#A02F6F", # Magenta (magenta-600)
+  "#24837B", # Cyan   (cyan-600)
+  "#6F6E69", # White  (base-600 — readable on light bg, not washed out)
+]
+
+brights = [
+  "#878580", # Bright Black  (base-500 — visible comment gray)
+  "#D14D41", # Bright Red    (red-400)
+  "#879A39", # Bright Green  (green-400)
+  "#D0A215", # Bright Yellow (yellow-400)
+  "#4385BE", # Bright Blue   (blue-400)
+  "#CE5D97", # Bright Magenta (magenta-400)
+  "#3AA99F", # Bright Cyan   (cyan-400)
+  "#100F0F", # Bright White  (black — full contrast text)
+]
+
+foreground = "#100F0F"
+background = "#FFFCF0"
+
+cursor_bg = "#100F0F"
+cursor_border = "#100F0F"
+cursor_fg = "#FFFCF0"
+
+selection_fg = "#100F0F"
+selection_bg = "#CECDC3"
+
+compose_cursor = "#AD8301"
+
+split = "#B7B5AC"
+
+[colors.indexed]
+# Fill out some useful indexed colors (base16-style)
+16 = "#BC5215"  # orange-600
+17 = "#AF3029"  # red-600
+
+[colors.tab_bar]
+background = "#F2F0E5"
+inactive_tab_edge = "#E6E4D9"
+
+[colors.tab_bar.active_tab]
+bg_color = "#FFFCF0"
+fg_color = "#100F0F"
+intensity = "Bold"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#E6E4D9"
+fg_color = "#6F6E69"
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = "#CECDC3"
+fg_color = "#100F0F"
+italic = true
+
+[colors.tab_bar.new_tab]
+bg_color = "#F2F0E5"
+fg_color = "#878580"
+
+[colors.tab_bar.new_tab_hover]
+bg_color = "#CECDC3"
+fg_color = "#100F0F"
+italic = true
+
+[metadata]
+aliases = ["Flexoki Light"]
+name = "Flexoki Light"
+origin_url = "https://stephango.com/flexoki"
+wezterm_version = "Always"
