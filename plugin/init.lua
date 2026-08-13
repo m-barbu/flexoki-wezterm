@@ -54,6 +54,18 @@ local palette = {
   magenta_600 = '#A02F6F',
 }
 
+-- WezTerm's tab_bar slots are independent config objects, so each one is handed
+-- its own table. Sharing a single table between active_tab and the hover slots
+-- means a caller tweaking active_tab silently retunes the hovers, and the edit
+-- leaks into the next colors() call.
+local function copy(t)
+  local out = {}
+  for key, value in pairs(t) do
+    out[key] = value
+  end
+  return out
+end
+
 local light = {}
 
 local light_active_tab = {
@@ -72,7 +84,8 @@ function light.colors()
     background = palette.paper,
 
     -- Softer than the black body text so the cursor reads as a marker rather
-    -- than the heaviest thing on screen. Matches the upstream Flexoki preset.
+    -- than the heaviest thing on screen. Upstream uses base800, which is nearly
+    -- as heavy as the text it sits in.
     cursor_bg = palette.base600,
     cursor_border = palette.base600,
     cursor_fg = palette.paper,
@@ -98,7 +111,7 @@ function light.colors()
 
     brights = {
       -- Bright black is the comment color. Upstream Flexoki uses base300 here,
-      -- which sits near 1.9:1 against paper; base500 keeps comments legible
+      -- which sits at 2.0:1 against paper; base500 keeps comments legible
       -- while still reading as de-emphasized.
       palette.base500,      -- Bright Black
       palette.red_400,      -- Bright Red
@@ -110,17 +123,22 @@ function light.colors()
       palette.base100,      -- Bright White
     },
 
-    -- base16 convention: orange and purple have no ANSI slot, so they live at
-    -- 16 and 17. This overwrites two cells of the 256-color cube (normally
-    -- #000000 and #00005f); programs that compute cube indices arithmetically
-    -- will render those two cells off-palette.
+    -- Orange and purple have no ANSI slot. base16-shell parks orange at 16
+    -- (its base09), so that half is convention; 17 is an extension, since
+    -- base16 spends it on base0F (brown) and Flexoki has no equivalent. This
+    -- overwrites two cells of the 256-color cube (normally #000000 and
+    -- #00005f); programs that compute cube indices arithmetically will render
+    -- those two cells off-palette.
     indexed = {
       [16] = palette.orange_600,
       [17] = palette.purple_600,
     },
 
+    -- Black rather than paper on the yellow. yellow_600 is the weakest accent
+    -- against a light background, so paper text on it lands at 3.39:1 where
+    -- black gets 5.49:1.
     copy_mode_active_highlight_bg = { Color = palette.yellow_600 },
-    copy_mode_active_highlight_fg = { Color = palette.paper },
+    copy_mode_active_highlight_fg = { Color = palette.black },
     copy_mode_inactive_highlight_bg = { Color = palette.base150 },
     copy_mode_inactive_highlight_fg = { Color = palette.black },
 
@@ -131,11 +149,11 @@ function light.colors()
 
     tab_bar = {
       background = palette.paper,
-      active_tab = light_active_tab,
-      inactive_tab = light_inactive_tab,
-      inactive_tab_hover = light_active_tab,
-      new_tab = light_inactive_tab,
-      new_tab_hover = light_active_tab,
+      active_tab = copy(light_active_tab),
+      inactive_tab = copy(light_inactive_tab),
+      inactive_tab_hover = copy(light_active_tab),
+      new_tab = copy(light_inactive_tab),
+      new_tab_hover = copy(light_active_tab),
       inactive_tab_edge = palette.base100, -- (Fancy tab bar only)
     },
   }
@@ -145,6 +163,24 @@ function light.window_frame() -- (Fancy tab bar only)
   return {
     active_titlebar_bg = palette.paper,
     inactive_titlebar_bg = palette.base50,
+
+    -- WezTerm's defaults for the rest of the frame are hardcoded for a dark
+    -- titlebar: #ffffff title text, #cccccc buttons on #333333, a #2b2042
+    -- border. Left unset, that is white text on paper at 1.03:1 and buttons at
+    -- 1.56:1. They only show when WezTerm draws the frame itself -- that is,
+    -- window_decorations = 'INTEGRATED_BUTTONS|RESIZE', or Windows and macOS --
+    -- so a Linux setup with the system titlebar never sees them.
+    --
+    -- Buttons take the titlebar background so they sit flush in the frame, and
+    -- hover raises them to the active tab's background.
+    active_titlebar_fg = palette.black,
+    inactive_titlebar_fg = palette.base500,
+    active_titlebar_border_bottom = palette.base150,
+    inactive_titlebar_border_bottom = palette.base100,
+    button_fg = palette.base600,
+    button_bg = palette.paper,
+    button_hover_fg = palette.black,
+    button_hover_bg = palette.base100,
   }
 end
 
@@ -234,11 +270,11 @@ function dark.colors()
 
     tab_bar = {
       background = palette.black,
-      active_tab = dark_active_tab,
-      inactive_tab = dark_inactive_tab,
-      inactive_tab_hover = dark_active_tab,
-      new_tab = dark_inactive_tab,
-      new_tab_hover = dark_active_tab,
+      active_tab = copy(dark_active_tab),
+      inactive_tab = copy(dark_inactive_tab),
+      inactive_tab_hover = copy(dark_active_tab),
+      new_tab = copy(dark_inactive_tab),
+      new_tab_hover = copy(dark_active_tab),
       inactive_tab_edge = palette.base800, -- (Fancy tab bar only)
     },
   }
@@ -248,6 +284,17 @@ function dark.window_frame() -- (Fancy tab bar only)
   return {
     active_titlebar_bg = palette.black,
     inactive_titlebar_bg = palette.base950,
+
+    -- See the note on light.window_frame(). WezTerm's defaults are legible
+    -- here, being built for a dark frame, but they are not Flexoki colors.
+    active_titlebar_fg = palette.base200,
+    inactive_titlebar_fg = palette.base600,
+    active_titlebar_border_bottom = palette.base850,
+    inactive_titlebar_border_bottom = palette.base900,
+    button_fg = palette.base400,
+    button_bg = palette.black,
+    button_hover_fg = palette.base200,
+    button_hover_bg = palette.base850,
   }
 end
 
@@ -278,11 +325,18 @@ end
 --
 --   config.colors = flexoki.swap_blue_cyan(theme.colors())
 local function swap_blue_cyan(colors)
+  -- Returns a new table rather than editing the one passed in, so that holding
+  -- a reference to the original stays meaningful and calling this twice is not
+  -- the same as never calling it.
+  local out = copy(colors)
+  out.ansi = copy(colors.ansi)
+  out.brights = copy(colors.brights)
+
   -- WezTerm's ansi/brights arrays are 1-indexed in palette order:
   -- 1 black, 2 red, 3 green, 4 yellow, 5 blue, 6 magenta, 7 cyan, 8 white.
-  colors.ansi[5], colors.ansi[7] = colors.ansi[7], colors.ansi[5]
-  colors.brights[5], colors.brights[7] = colors.brights[7], colors.brights[5]
-  return colors
+  out.ansi[5], out.ansi[7] = out.ansi[7], out.ansi[5]
+  out.brights[5], out.brights[7] = out.brights[7], out.brights[5]
+  return out
 end
 
 return {

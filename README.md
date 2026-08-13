@@ -104,12 +104,17 @@ return config
 
 ## Why not the built-in schemes?
 
-WezTerm ships built-in `flexoki-light` and `flexoki-dark` color schemes imported
-from the upstream Flexoki repository. This plugin differs in two ways:
+WezTerm ships built-in `Flexoki Light` and `Flexoki Dark` color schemes imported
+from the upstream Flexoki repository. This plugin differs in three ways:
 
 - It includes **tab bar and window frame colors**, which the built-in schemes do
-  not define at all.
+  not define at all. The frame colors matter more than they look: WezTerm's
+  defaults for the title text and window buttons are hardcoded for a dark
+  titlebar, so a light theme that sets only the titlebar background gets white
+  text on paper at 1.03:1 wherever WezTerm draws the frame itself.
 - It uses **different accent steps in the dark variant** (see below).
+- It adjusts **cursor, selection, and a few slot assignments** in both variants
+  (see below).
 
 ## Swapping blue and cyan
 
@@ -121,8 +126,8 @@ that asks for cyan gets blue.
 config.colors = flexoki.swap_blue_cyan(theme.colors())
 ```
 
-The reason for such a swap was that I found the syntax highlighting for nushell
-with starship commands was too green.
+The reason for such a swap is that nushell paints command names with the cyan
+slot, and Flexoki's cyan reads too green for that job. Blue suits it better.
 
 ## Deviations from the upstream presets
 
@@ -132,17 +137,33 @@ Upstream reference
 These are deliberate, and each one is commented in `plugin/init.lua`:
 
 - **Dark variant uses the 400 series for normal colors and 300 for brights.**
-  The upstream WezTerm preset uses the 600 series for normal colors, which sits
-  at roughly 2.8:1 against the `#100F0F` background for green. The 400 series
-  follows Flexoki's own stated guidance ("for dark themes use 400") and keeps
-  every accent at 4.4:1 or better.
+  The upstream WezTerm preset uses the 600 series for normal colors, which
+  bottoms out at 2.46:1 against the `#100F0F` background for purple, with blue
+  at 2.93:1 and red at 2.99:1. The 400 series follows Flexoki's own stated
+  guidance ("for dark themes use 400") and keeps every accent at 4.4:1 or
+  better.
 - **Slot 5 is magenta in both variants.** The upstream dark preset puts purple
-  there. Slot 5 is canonically magenta, so orange and purple go to indexed 16
-  and 17 instead, following the base16 convention.
+  there while its light preset uses magenta, so the two disagree about what
+  slot 5 means. Slot 5 is canonically magenta, so orange and purple go to
+  indexed 16 and 17 instead. Index 16 follows base16-shell, which parks orange
+  there; index 17 is an extension, since base16 spends it on `base0F` (brown)
+  and Flexoki has no equivalent.
 - **Dark slot 0 is `base850`, not `#100F0F`.** Upstream uses the background
   color itself, which renders ANSI black invisible.
-- **Light bright black is `base500`, not `base300`.** `base300` sits near 1.9:1
+- **Light bright black is `base500`, not `base300`.** `base300` sits at 2.0:1
   against paper, which is too faint for comments.
+- **Dark slot 7 is `base300`, not `base200`.** `base200` is the dark variant's
+  foreground, so upstream's ANSI white is indistinguishable from unstyled text.
+- **Dark bright black is `base600`, not `base700`.** Same reasoning as the light
+  variant's: `base700` sits at 2.61:1 against `#100F0F`.
+- **Cursors are two steps softer than upstream.** Upstream uses `base800`
+  (light) and `base200` (dark), which makes the cursor as heavy as the body
+  text. This theme uses `base600` and `base400`.
+- **Selections are stronger than upstream.** Upstream uses `base100` (light,
+  1.24:1 against the background) and `base900` (dark, 1.28:1). This theme uses
+  `base200` and `base800`, which are actually visible.
+- **Indexed 16 and 17 are populated at all.** Upstream leaves
+  `[colors.indexed]` empty, so orange and purple are unreachable.
 
 Note that indexed colors 16 and 17 overwrite two cells of the 256-color cube
 (normally `#000000` and `#00005f`). Programs that compute cube indices
