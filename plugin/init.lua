@@ -106,7 +106,7 @@ function light.colors()
       palette.blue_600,     -- Blue
       palette.magenta_600,  -- Magenta
       palette.cyan_600,     -- Cyan
-      palette.base150,      -- White
+      palette.orange_600,   -- White
     },
 
     brights = {
@@ -120,7 +120,7 @@ function light.colors()
       palette.blue_400,     -- Bright Blue
       palette.magenta_400,  -- Bright Magenta
       palette.cyan_400,     -- Bright Cyan
-      palette.base100,      -- Bright White
+      palette.base150,      -- Bright White
     },
 
     -- Orange and purple have no ANSI slot. base16-shell parks orange at 16
